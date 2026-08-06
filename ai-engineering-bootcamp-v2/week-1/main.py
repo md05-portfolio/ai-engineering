@@ -16,6 +16,13 @@ load_dotenv(_ENV_PATH)
 app = FastAPI()
 client = OpenAI()  # Reads OPENAI_API_KEY from the environment; never hardcode keys.
 
+
+# Health check endpoint for Render deployment
+@app.get("/health")
+def health():
+    """Simple health check for deployment platforms like Render."""
+    return {"status": "ok"}
+
 # Stage 4 default — strong general model; swap at request time for the live demo.
 DEFAULT_MODEL = "gpt-4o"
 
