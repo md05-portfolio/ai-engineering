@@ -1,165 +1,252 @@
-"""Single test page for all five /ask demo stages.
-
-Run this page:
-  streamlit run demo_page.py
+"""
+Week 2 RAG Application - Streamlit UI
+Interactive interface for document ingestion and RAG queries.
+Points to live Render API by default.
 """
 
+import os
+import streamlit as st
+import httpx
 import json
 
-import httpx
-import streamlit as st
+# Configuration
+API_BASE_URL = os.getenv("RAG_API_URL", "https://ai-engineering-wlqp.onrender.com")
+DEFAULT_MODEL = "gpt-4o-mini"
 
-WORKDIR_CMD = "ai-engineering-bootcamp-v2/week-1"  # path from repo root
-
-STAGES = [
-    {
-        "num": 1,
-        "title": "Bare /ask",
-        "serve": "uvicorn serve_stage1:app --port 8000 --reload",
-        "look_for": "Plain `answer` string and real `tokens_used`.",
-        "dummy_question": "What is Retrieval-Augmented Generation in one sentence?",
-        "fields": [],
-    },
-    {
-        "num": 2,
-        "title": "Structured output",
-        "serve": "uvicorn serve_stage2:app --port 8000 --reload",
-        "look_for": "`answer` is an object with `confidence` and `sources_needed`.",
-        "dummy_question": "Explain what an embedding is in one sentence.",
-        "fields": [],
-    },
-    {
-        "num": 3,
-        "title": "Guardrail + retry",
-        "serve": "uvicorn serve_stage3:app --port 8000 --reload",
-        "look_for": "Normal question works; `force_bad` triggers retry then succeeds.",
-        "dummy_question": "What is a vector database?",
-        "dummy_force_bad": True,
-        "fields": ["force_bad"],
-    },
-    {
-        "num": 4,
-        "title": "Model selectable",
-        "serve": "uvicorn serve_stage4:app --port 8000 --reload",
-        "look_for": "`model` and `latency_ms` in the response; swap models live.",
-        "dummy_question": "What is chunking in RAG?",
-        "dummy_model": "gpt-4o-mini",
-        "fields": ["force_bad", "model"],
-    },
-    {
-        "num": 5,
-        "title": "Cost readout",
-        "serve": "uvicorn serve_stage5:app --port 8000 --reload",
-        "look_for": "`cost_usd` closes the loop — same prompt, different model, different cost.",
-        "dummy_question": "What is Retrieval-Augmented Generation in one sentence?",
-        "dummy_model": "gpt-4o",
-        "fields": ["force_bad", "model"],
-    },
-]
-
-
-def build_payload(
-    question: str,
-    stage: dict,
-    force_bad: bool,
-    model: str | None,
-) -> dict:
-    payload: dict = {"question": question}
-    if "force_bad" in stage["fields"]:
-        payload["force_bad"] = force_bad
-    if "model" in stage["fields"] and model:
-        payload["model"] = model
-    return payload
-
-
-def call_ask(base_url: str, payload: dict) -> tuple[int, dict | str]:
-    try:
-        response = httpx.post(f"{base_url.rstrip('/')}/ask", json=payload, timeout=120.0)
-        try:
-            return response.status_code, response.json()
-        except json.JSONDecodeError:
-            return response.status_code, response.text
-    except httpx.ConnectError:
-        return 0, {"error": f"Cannot reach {base_url} — start the stage server first."}
-    except httpx.HTTPError as exc:
-        return 0, {"error": str(exc)}
-
-
-def render_curl(base_url: str, payload: dict) -> str:
-    body = json.dumps(payload)
-    return (
-        f'curl -s -X POST {base_url.rstrip("/")}/ask '
-        f'-H "Content-Type: application/json" -d \'{body}\''
-    )
-
-
-def render_terminal_block(stage: dict, base_url: str, payload: dict) -> str:
-    return f"""cd {WORKDIR_CMD}
-source .venv/bin/activate
-pip install -r requirements.txt
-{stage["serve"]}
-
-# In another terminal — test this stage:
-{render_curl(base_url, payload)}"""
-
-
-st.set_page_config(page_title="Week 1 /ask Demo", layout="wide")
-st.title("Week 1 — `/ask` Demo Runner")
-st.caption("One page, five sections. Copy the commands below, start the matching server, then hit **Run test**.")
-
-base_url = st.sidebar.text_input("API base URL", "https://ai-engineering-wlqp.onrender.com")
-
-st.sidebar.markdown("### Run this page")
-st.sidebar.code(
-    f"cd {WORKDIR_CMD}\nsource .venv/bin/activate\nstreamlit run demo_page.py",
-    language="bash",
+# Page configuration
+st.set_page_config(
+    page_title="Week 2 RAG Demo",
+    page_icon="🔍",
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-tabs = st.tabs([f"Demo {s['num']}: {s['title']}" for s in STAGES])
+st.title("Week 2: Retrieval-Augmented Generation Demo")
+st.markdown(
+    f"**Live API:** `{API_BASE_URL}`  |  **Status:** Check health endpoint"
+)
 
-for tab, stage in zip(tabs, STAGES):
-    with tab:
-        st.subheader(f"Demo {stage['num']} — {stage['title']}")
-        st.markdown(f"**Look for:** {stage['look_for']}")
+# Sidebar configuration
+st.sidebar.header("Configuration")
+mode = st.sidebar.radio("Select Mode:", ["Query RAG", "Ingest Document"], index=0)
+use_rag = st.sidebar.checkbox("Enable RAG (uncheck for regular LLM)", value=True)
+model = st.sidebar.selectbox(
+    "Model",
+    ["gpt-4o-mini", "gpt-4o", "o3-mini"],
+    index=0,
+)
 
-        default_q = stage["dummy_question"]
-        stage_question = st.text_input(
-            "Question",
-            default_q,
-            key=f"q_{stage['num']}",
-            placeholder="Type a question to send to /ask…",
+# Initialize session state
+if "ingest_results" not in st.session_state:
+    st.session_state.ingest_results = []
+if "query_results" not in st.session_state:
+    st.session_state.query_results = None
+
+
+def fetch_health():
+    """Get health status from API."""
+    try:
+        response = httpx.get(f"{API_BASE_URL}/health", timeout=10.0)
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def ingest_document(text: str, doc_id: str, metadata: dict = None):
+    """Call ingest endpoint."""
+    try:
+        payload = {"text": text, "document_id": doc_id, "metadata": metadata or {}}
+        response = httpx.post(
+            f"{API_BASE_URL}/ingest",
+            json=payload,
+            timeout=30.0,
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def query_rag(question: str, use_rag: bool = True):
+    """Call ask endpoint with RAG."""
+    try:
+        payload = {"question": question, "model": model, "use_rag": use_rag}
+        response = httpx.post(
+            f"{API_BASE_URL}/ask",
+            json=payload,
+            timeout=30.0,
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def retrieve_debug(query: str):
+    """Call debug/retrieve endpoint."""
+    try:
+        response = httpx.get(
+            f"{API_BASE_URL}/debug/retrieve",
+            params={"q": query},
+            timeout=10.0,
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# Mode: Query RAG
+if mode == "Query RAG":
+    st.header("Query RAG System")
+
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        question = st.text_area(
+            "Ask a question:",
+            placeholder="What is semantic search?",
+            height=100,
+        )
+    with col2:
+        st.markdown("")
+        st.markdown("")
+        query_button = st.button("Submit Query", type="primary", use_container_width=True)
+
+    if query_button and question:
+        with st.spinner("Querying RAG system..."):
+            result = query_rag(question, use_rag=use_rag)
+
+        if "error" in result:
+            st.error(f"Error: {result['error']}")
+        else:
+            st.session_state.query_results = result
+
+    # Display results
+    if st.session_state.query_results:
+        result = st.session_state.query_results
+
+        # Answer section
+        st.subheader("Answer")
+        answer_obj = result.get("answer", {})
+        answer_text = answer_obj.get("answer", "No answer provided")
+        confidence = answer_obj.get("confidence", 0)
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Confidence", f"{confidence:.0%}")
+        with col2:
+            st.metric("Tokens Used", result.get("tokens_used", 0))
+        with col3:
+            st.metric("Cost (USD)", f"${result.get('cost_usd', 0):.6f}")
+
+        st.markdown(answer_text)
+
+        # Citations section
+        citations = result.get("citations")
+        if citations:
+            st.subheader("Citations")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.info(f"**Retrieved from {len(citations)} document(s):**")
+            with col2:
+                st.caption(f"Chunks retrieved: {result.get('retrieved_chunks', 0)}")
+
+            for doc_id in citations:
+                st.write(f"📄 `{doc_id}`")
+
+        # Metadata
+        with st.expander("Metadata"):
+            st.json(
+                {
+                    "model": result.get("model"),
+                    "latency_ms": result.get("latency_ms"),
+                    "rag_enabled": use_rag,
+                }
+            )
+
+        # Debug retrieval
+        if st.checkbox("Show Retrieved Chunks"):
+            with st.spinner("Fetching retrieved chunks..."):
+                chunks = retrieve_debug(question)
+
+            if "error" not in chunks:
+                for i, chunk in enumerate(chunks[:5], 1):
+                    with st.expander(
+                        f"Chunk {i}: {chunk['chunk_id']} (score: {chunk['similarity_score']:.3f})"
+                    ):
+                        st.write(chunk["text"])
+                        st.caption(f"Metadata: {chunk['metadata']}")
+
+# Mode: Ingest Document
+elif mode == "Ingest Document":
+    st.header("Ingest Document into Vector Store")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        doc_text = st.text_area(
+            "Document text:",
+            placeholder="Paste your document here...",
+            height=150,
         )
 
-        force_bad = stage.get("dummy_force_bad", False)
-        model = stage.get("dummy_model")
-        if "force_bad" in stage["fields"]:
-            force_bad = st.checkbox(
-                "force_bad (break schema on attempt 1)",
-                value=stage.get("dummy_force_bad", False),
-                key=f"bad_{stage['num']}",
+    with col2:
+        doc_id = st.text_input(
+            "Document ID:",
+            placeholder="e.g., doc-001",
+        )
+        source = st.text_input(
+            "Source (optional):",
+            placeholder="e.g., tutorial.md",
+        )
+        ingest_button = st.button("Ingest", type="primary", use_container_width=True)
+
+    if ingest_button:
+        if not doc_text or not doc_id:
+            st.error("Please provide both document text and ID")
+        else:
+            with st.spinner("Ingesting document..."):
+                metadata = {"source": source} if source else {}
+                result = ingest_document(doc_text, doc_id, metadata)
+
+            if "error" in result:
+                st.error(f"Ingestion failed: {result['error']}")
+            else:
+                st.success(f"Ingestion successful!")
+                chunks_indexed = result.get("chunks_indexed", 0)
+                st.metric("Chunks Indexed", chunks_indexed)
+                st.session_state.ingest_results.append(result)
+
+    # History
+    if st.session_state.ingest_results:
+        st.subheader("Ingestion History")
+        for i, res in enumerate(st.session_state.ingest_results):
+            st.write(
+                f"{i+1}. **{res['document_id']}** - {res['chunks_indexed']} chunks ({res['status']})"
             )
-        if "model" in stage["fields"]:
-            options = [None, "gpt-4o", "gpt-4o-mini", "o3-mini"]
-            default_model = stage.get("dummy_model")
-            model = st.selectbox(
-                "model",
-                options,
-                index=options.index(default_model) if default_model in options else 0,
-                format_func=lambda m: m or "gpt-4o (default)",
-                key=f"model_{stage['num']}",
-            )
 
-        payload = build_payload(stage_question, stage, force_bad, model)
-
-        st.markdown("**Copy & run (terminal 1 — server, terminal 2 — curl):**")
-        st.code(render_terminal_block(stage, base_url, payload), language="bash")
-
-        if st.button("Run test", key=f"run_{stage['num']}", type="primary"):
-            with st.spinner("Calling /ask..."):
-                status, data = call_ask(base_url, payload)
-            if status:
-                st.markdown(f"**HTTP {status}**")
-            st.json(data)
-
+# Sidebar: Health check
 st.sidebar.divider()
-st.sidebar.markdown("**Full reference:** `main.py` / `serve_stage5.py`")
+st.sidebar.subheader("System Status")
+if st.sidebar.button("Check Health", use_container_width=True):
+    with st.spinner("Checking health..."):
+        health = fetch_health()
+
+    if "error" in health:
+        st.sidebar.error(f"API Error: {health['error']}")
+    else:
+        st.sidebar.success("System healthy!")
+        st.sidebar.metric("OpenAI", health.get("openai", "unknown"))
+        st.sidebar.metric("Pinecone", health.get("pinecone", "unknown"))
+        st.sidebar.metric("Vectors Indexed", health.get("pinecone_vectors", 0))
+        st.sidebar.caption(f"Dims: {health.get('pinecone_dimensions', 0)}")
+
+# Footer
+st.divider()
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.caption("🔗 [Live API](https://ai-engineering-wlqp.onrender.com)")
+with col2:
+    st.caption("📚 [GitHub](https://github.com/md05-portfolio/ai-engineering)")
+with col3:
+    st.caption("📖 [Week 2 Docs](https://github.com/md05-portfolio/ai-engineering/blob/main/ai-engineering-bootcamp-v2/week-1/WEEK2_DEMONSTRATION.md)")
