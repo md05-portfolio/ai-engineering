@@ -12,6 +12,9 @@ from openai import OpenAI
 from pinecone import Pinecone
 from pydantic import BaseModel, Field, ValidationError
 
+# Week 3: Agent
+from agent_research import run_agent
+
 # Load .env from this folder so the key is found regardless of shell working directory.
 _ENV_PATH = Path(__file__).resolve().parent / ".env"
 load_dotenv(_ENV_PATH)
@@ -473,4 +476,21 @@ def ingest(body: IngestRequest) -> IngestResponse:
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Ingestion failed: {str(e)}"
+        )
+
+
+# Week 3: Research Agent Endpoint
+@app.post("/agent")
+def agent_endpoint(body: dict) -> dict:
+    """Run research agent with Think → Act → Observe loop."""
+    question = body.get("question", "")
+    if not question:
+        raise HTTPException(status_code=400, detail="Missing 'question'")
+
+    try:
+        result = run_agent(question, max_iterations=8)
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Agent failed: {str(e)}"
         )
