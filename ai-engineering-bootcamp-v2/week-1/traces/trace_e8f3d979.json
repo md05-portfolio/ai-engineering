@@ -1,0 +1,24 @@
+{
+  "trace_id": "e8f3d979",
+  "timestamp": "2026-08-23T21:01:08.149877",
+  "question": "What is prompt engineering?",
+  "answer": "Embeddings are representations of text.",
+  "status": "complete",
+  "iterations": 1,
+  "latency_ms": 5512,
+  "model": "gemini-3.5-flash",
+  "failure_category": "incomplete_answer",
+  "annotator_notes": "Answer is too brief and doesn't fully address the question",
+  "success": false,
+  "retrieval_queries": [
+    "What is prompt engineering?"
+  ],
+  "retrieved_chunks_count": 3,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

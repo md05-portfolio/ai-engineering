@@ -1,0 +1,26 @@
+{
+  "trace_id": "196deb01",
+  "timestamp": "2026-08-23T20:41:08.149877",
+  "question": "How do I implement retrieval augmented generation?",
+  "answer": "Semantic search uses embeddings to find conceptually similar documents rather than keyword matching.",
+  "status": "complete",
+  "iterations": 1,
+  "latency_ms": 2846,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "How do I implement retrieval augmented generation?"
+  ],
+  "retrieved_chunks_count": 5,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3",
+    "doc_4"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

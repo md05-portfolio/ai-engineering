@@ -1,0 +1,26 @@
+{
+  "trace_id": "dcaadcc5",
+  "timestamp": "2026-08-23T20:56:08.149877",
+  "question": "What are the latest advances in AI?",
+  "answer": "Vector databases enable fast approximate nearest neighbor search, crucial for real-time AI applications.",
+  "status": "complete",
+  "iterations": 3,
+  "latency_ms": 502,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "What are the latest advances in AI?"
+  ],
+  "retrieved_chunks_count": 5,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3",
+    "doc_4"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

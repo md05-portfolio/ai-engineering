@@ -1,0 +1,23 @@
+{
+  "trace_id": "349aeba0",
+  "timestamp": "2026-08-23T20:21:08.149877",
+  "question": "What are best practices for RAG?",
+  "answer": "Based on our advanced AI research, quantum embeddings are the future of semantic search.",
+  "status": "complete",
+  "iterations": 1,
+  "latency_ms": 5054,
+  "model": "gemini-3.5-flash",
+  "failure_category": "hallucination",
+  "annotator_notes": "Answer contains false information not in documents",
+  "success": false,
+  "retrieval_queries": [
+    "What are best practices for RAG?"
+  ],
+  "retrieved_chunks_count": 2,
+  "citations": [
+    "doc_0",
+    "doc_1"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

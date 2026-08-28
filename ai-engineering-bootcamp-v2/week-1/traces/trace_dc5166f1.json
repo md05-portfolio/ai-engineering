@@ -1,0 +1,25 @@
+{
+  "trace_id": "dc5166f1",
+  "timestamp": "2026-08-23T20:36:08.149877",
+  "question": "What embedding models are discussed in our documents?",
+  "answer": "Attention mechanisms allow transformers to weight different parts of input differently, improving context understanding.",
+  "status": "complete",
+  "iterations": 2,
+  "latency_ms": 1471,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "What embedding models are discussed in our documents?"
+  ],
+  "retrieved_chunks_count": 4,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

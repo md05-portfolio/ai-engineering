@@ -1,0 +1,18 @@
+{
+  "trace_id": "2caf4c20",
+  "timestamp": "2026-08-23T21:41:08.149877",
+  "question": "What are best practices for RAG?",
+  "answer": null,
+  "status": "error",
+  "iterations": 2,
+  "latency_ms": 6308,
+  "model": "gemini-3.5-flash",
+  "failure_category": "retrieval_failure",
+  "annotator_notes": "No relevant documents retrieved",
+  "success": false,
+  "retrieval_queries": [],
+  "retrieved_chunks_count": 0,
+  "citations": [],
+  "thoughts": [],
+  "error_message": null
+}

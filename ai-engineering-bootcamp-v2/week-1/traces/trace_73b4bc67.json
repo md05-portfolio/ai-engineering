@@ -1,0 +1,25 @@
+{
+  "trace_id": "73b4bc67",
+  "timestamp": "2026-08-23T21:31:08.149877",
+  "question": "Explain zero-shot learning.",
+  "answer": "Best practices for RAG include: (1) good chunking strategy, (2) semantic relevance of retrieval, (3) prompt engineering for grounding.",
+  "status": "complete",
+  "iterations": 3,
+  "latency_ms": 4749,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "Explain zero-shot learning."
+  ],
+  "retrieved_chunks_count": 4,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

@@ -1,0 +1,26 @@
+{
+  "trace_id": "34d35c67",
+  "timestamp": "2026-08-23T20:16:08.149877",
+  "question": "What are best practices for RAG?",
+  "answer": "Embedding models like text-embedding-3-small convert text to high-dimensional vectors. These are used in our RAG system for semantic search.",
+  "status": "complete",
+  "iterations": 1,
+  "latency_ms": 4933,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "What are best practices for RAG?"
+  ],
+  "retrieved_chunks_count": 5,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3",
+    "doc_4"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

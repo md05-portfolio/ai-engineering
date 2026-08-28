@@ -1,0 +1,24 @@
+{
+  "trace_id": "63e9d697",
+  "timestamp": "2026-08-23T20:46:08.149877",
+  "question": "Explain zero-shot learning.",
+  "answer": "Pinecone is a managed vector database that scales semantic search. It's optimized for low-latency retrieval.",
+  "status": "complete",
+  "iterations": 2,
+  "latency_ms": 2576,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "Explain zero-shot learning."
+  ],
+  "retrieved_chunks_count": 3,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

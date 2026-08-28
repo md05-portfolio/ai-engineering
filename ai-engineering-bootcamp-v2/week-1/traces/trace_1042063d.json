@@ -1,0 +1,24 @@
+{
+  "trace_id": "1042063d",
+  "timestamp": "2026-08-23T20:31:08.149877",
+  "question": "Explain few-shot prompting.",
+  "answer": "Embedding models like text-embedding-3-small convert text to high-dimensional vectors. These are used in our RAG system for semantic search.",
+  "status": "complete",
+  "iterations": 3,
+  "latency_ms": 3541,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "Explain few-shot prompting."
+  ],
+  "retrieved_chunks_count": 3,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

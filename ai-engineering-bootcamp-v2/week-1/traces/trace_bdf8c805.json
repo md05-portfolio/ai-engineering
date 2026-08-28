@@ -1,0 +1,23 @@
+{
+  "trace_id": "bdf8c805",
+  "timestamp": "2026-08-23T21:46:08.149877",
+  "question": "What are multi-modal models?",
+  "answer": "Based on our advanced AI research, quantum embeddings are the future of semantic search.",
+  "status": "complete",
+  "iterations": 3,
+  "latency_ms": 2909,
+  "model": "gemini-3.5-flash",
+  "failure_category": "hallucination",
+  "annotator_notes": "Answer contains false information not in documents",
+  "success": false,
+  "retrieval_queries": [
+    "What are multi-modal models?"
+  ],
+  "retrieved_chunks_count": 2,
+  "citations": [
+    "doc_0",
+    "doc_1"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

@@ -1,0 +1,25 @@
+{
+  "trace_id": "e58a3b29",
+  "timestamp": "2026-08-23T20:51:08.149877",
+  "question": "How do embeddings work?",
+  "answer": "Language models are neural networks trained on text to predict next tokens, enabling various NLP tasks.",
+  "status": "complete",
+  "iterations": 1,
+  "latency_ms": 4559,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "How do embeddings work?"
+  ],
+  "retrieved_chunks_count": 4,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

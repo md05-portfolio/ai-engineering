@@ -1,0 +1,24 @@
+{
+  "trace_id": "6eac5927",
+  "timestamp": "2026-08-23T21:06:08.149877",
+  "question": "What are the latest advances in AI?",
+  "answer": "Language models are neural networks trained on text to predict next tokens, enabling various NLP tasks.",
+  "status": "complete",
+  "iterations": 3,
+  "latency_ms": 4370,
+  "model": "gemini-3.5-flash",
+  "failure_category": null,
+  "annotator_notes": "Good answer with relevant retrieval",
+  "success": true,
+  "retrieval_queries": [
+    "What are the latest advances in AI?"
+  ],
+  "retrieved_chunks_count": 3,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2"
+  ],
+  "thoughts": [],
+  "error_message": null
+}

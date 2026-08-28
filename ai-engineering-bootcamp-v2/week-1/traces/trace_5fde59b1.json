@@ -1,0 +1,18 @@
+{
+  "trace_id": "5fde59b1",
+  "timestamp": "2026-08-23T21:16:08.149877",
+  "question": "Describe attention mechanisms in transformers.",
+  "answer": null,
+  "status": "error",
+  "iterations": 1,
+  "latency_ms": 6766,
+  "model": "gemini-3.5-flash",
+  "failure_category": "retrieval_failure",
+  "annotator_notes": "No relevant documents retrieved",
+  "success": false,
+  "retrieval_queries": [],
+  "retrieved_chunks_count": 0,
+  "citations": [],
+  "thoughts": [],
+  "error_message": null
+}

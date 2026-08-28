@@ -1,0 +1,18 @@
+{
+  "trace_id": "b0745180",
+  "timestamp": "2026-08-23T21:21:08.149877",
+  "question": "Explain zero-shot learning.",
+  "answer": "Processing error occurred during retrieval.",
+  "status": "error",
+  "iterations": 2,
+  "latency_ms": 2467,
+  "model": "gemini-3.5-flash",
+  "failure_category": "api_error",
+  "annotator_notes": "API call failed",
+  "success": false,
+  "retrieval_queries": [],
+  "retrieved_chunks_count": 0,
+  "citations": [],
+  "thoughts": [],
+  "error_message": null
+}

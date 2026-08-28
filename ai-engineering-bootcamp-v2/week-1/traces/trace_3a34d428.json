@@ -1,0 +1,25 @@
+{
+  "trace_id": "3a34d428",
+  "timestamp": "2026-08-23T20:26:08.149877",
+  "question": "What is Pinecone?",
+  "answer": "Based on our advanced AI research, quantum embeddings are the future of semantic search.",
+  "status": "complete",
+  "iterations": 2,
+  "latency_ms": 4797,
+  "model": "gemini-3.5-flash",
+  "failure_category": "hallucination",
+  "annotator_notes": "Answer contains false information not in documents",
+  "success": false,
+  "retrieval_queries": [
+    "What is Pinecone?"
+  ],
+  "retrieved_chunks_count": 4,
+  "citations": [
+    "doc_0",
+    "doc_1",
+    "doc_2",
+    "doc_3"
+  ],
+  "thoughts": [],
+  "error_message": null
+}
