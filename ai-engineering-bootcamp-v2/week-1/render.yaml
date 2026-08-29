@@ -1,0 +1,40 @@
+services:
+  # Week 4 Evaluation Dashboard
+  - type: web
+    name: ai-engineering-week4-eval
+    env: python
+    plan: free  # or "standard" for production
+
+    # Build and start commands
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: streamlit run streamlit_week4_eval.py --server.port=$PORT --server.address=0.0.0.0
+
+    # Port configuration
+    envVars:
+      - key: STREAMLIT_SERVER_PORT
+        value: $PORT
+      - key: STREAMLIT_SERVER_ADDRESS
+        value: 0.0.0.0
+      - key: STREAMLIT_LOGGER_LEVEL
+        value: info
+
+      # Your API keys (add these in Render dashboard Environment section)
+      - key: OPENAI_API_KEY
+        sync: false  # Set this in dashboard
+      - key: GOOGLE_API_KEY
+        sync: false  # Set this in dashboard
+      - key: PINECONE_API_KEY
+        sync: false  # Set this in dashboard
+      - key: PINECONE_INDEX_NAME
+        value: ai-engineer-rag
+      - key: RAG_API_URL
+        value: https://ai-engineering-wlqp.onrender.com  # Your Week 1-3 API
+
+    # Health check
+    healthCheckPath: /
+    healthCheckInterval: 300
+
+    # Auto-deploy on git push
+    autoDeploy: true
