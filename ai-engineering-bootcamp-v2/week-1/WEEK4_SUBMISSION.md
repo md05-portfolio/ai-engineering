@@ -398,11 +398,10 @@ After completing Week 4, you understand:
 
 ---
 
-## 📞 Contact & Questions
+## 📞 Contact
 
 **Student:** Madhuri Hume  
 **Email:** mdhume05@proton.me  
-**GitHub:** md05-portfolio  
 
 ---
 
